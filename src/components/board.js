@@ -29,8 +29,9 @@ export default class Board extends React.Component {
   render() {
     const boxes = []
     for (let i = this.state.size - 1; i >= 0; i--) {
-      for (let j = this.state.size; j > 0; j--) {
-        const count = i * this.state.size + j
+      for (let j = 0; j < this.state.size; j++) {
+        let count = i * this.state.size + j + 1
+        if (i % 2 === 1) count = (i + 1) * this.state.size - j
         const box = (
           <GridListTile id={count} className="ular-mabok-box">
             <Box>{count}</Box>
