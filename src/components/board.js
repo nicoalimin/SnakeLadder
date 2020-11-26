@@ -1,4 +1,4 @@
-import { Box, Grid, GridList, GridListTile, List, ListItem, ListSubheader, TextField } from '@material-ui/core'
+import { Avatar, Box, Grid, GridList, GridListTile, List, ListItem, ListSubheader, TextField } from '@material-ui/core'
 import React from 'react'
 
 const initialState = {
@@ -45,6 +45,7 @@ export default class Board extends React.Component {
       return (
         <ListItem>
           {index+1}. {p.name}
+          <Avatar color={p.color}>{p.initials}</Avatar>
         </ListItem>
       )
     })
