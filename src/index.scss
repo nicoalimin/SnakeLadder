@@ -15,10 +15,23 @@ code {
 body {
   background-color: lightgray;
   .ular-mabok-board {
+    .leaderboard-avatar {
+      height: "20px";
+    }
     width: 800px;
     .ular-mabok-box {
       height: 100px !important;
       border: black solid 0.5px;
+    }
+  }
+  .ular-mabok {
+    .delete-button {
+      font-size: 10px;
+      height: 12px;
+      width: 12px;
+    }
+    .delete-button:hover {
+      cursor: pointer;
     }
   }
 }

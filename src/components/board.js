@@ -44,15 +44,25 @@ export default class Board extends React.Component {
     const listItems = this.state.players.map((p, index) => {
       return (
         <ListItem>
-          {index+1}. {p.name}
-          <Avatar color={p.color}>{p.initials}</Avatar>
+          <div className="delete-button" onClick={() => {
+            this.setState({
+              ...this.state,
+              players: this.state.players.filter(pl => pl.name !== p.name)
+            })
+          }}>
+            x
+          </div>
+          &nbsp;{index+1}.&nbsp;<Avatar style={{ backgroundColor: p.color, height: "20px", width: "20px", fontSize: "12px" }}>{p.initials}</Avatar>
+          &nbsp;
+          -
+          &nbsp;{p.name}
         </ListItem>
       )
     })
 
     return (
       <>
-        <Grid container>
+        <Grid container className="ular-mabok">
           <Grid item xs={8}>
             <Grid item>
               <Grid item xs={12}>
@@ -72,9 +82,11 @@ export default class Board extends React.Component {
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
+                      if (this.state.addPlayerName === "") return
+                      if (!!this.state.players.find(p => p.name === this.state.addPlayerName)) return
                       const player = {
                         name: this.state.addPlayerName,
-                        initials: this.state.addPlayerName.substring(0, 1),
+                        initials: this.state.addPlayerName.substring(0, 2),
                         color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
                         points: 0
                       }
