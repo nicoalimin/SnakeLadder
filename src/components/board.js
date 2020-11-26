@@ -40,10 +40,10 @@ export default class Board extends React.Component {
       }
     }
 
-    const listItems = this.state.players.map(p => {
+    const listItems = this.state.players.map((p, index) => {
       return (
         <ListItem>
-          {p.name}
+          {index+1}. {p.name}
         </ListItem>
       )
     })
@@ -57,7 +57,8 @@ export default class Board extends React.Component {
                 <TextField
                   id="ular-mabok-input"
                   label="Add player"
-                  placeholder="Insert name here"
+                  placeholder="Insert name here..."
+                  value={this.state.addPlayerName}
                   style={{ margin: 8 }}
                   margin="normal"
                   InputLabelProps={{
@@ -72,12 +73,13 @@ export default class Board extends React.Component {
                       const player = {
                         name: this.state.addPlayerName,
                         initials: this.state.addPlayerName.substring(0, 1),
-                        color: `#${Math.floor(Math.random()*16777215).toString(16)}`
+                        color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+                        points: 0
                       }
                       this.setState({
                         ...this.state,
-                        players: [...this.state.players, player],
-                        addPlayerName: ""
+                        players: [...this.state.players, player].sort((a, b) => (a.points - b.points)),
+                        addPlayerName: initialState.addPlayerName
                       })
                     }
                   }}
