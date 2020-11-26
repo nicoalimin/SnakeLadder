@@ -6,7 +6,7 @@ import Board from './components/board';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Board />
+    <Board className="ular-mabok" />
   </React.StrictMode>,
   document.getElementById('root')
 );
