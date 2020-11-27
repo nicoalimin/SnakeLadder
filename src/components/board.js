@@ -2,12 +2,12 @@ import { Avatar, Box, Button, Grid, GridList, GridListTile, List, ListItem, List
 import React from 'react'
 import Draggable from 'react-draggable'
 import logo from '../static/logo.jpeg'
-import diceOne from '../static/dice_one.png'
-import diceTwo from '../static/dice_two.png'
-import diceThree from '../static/dice_three.png'
-import diceFour from '../static/dice_four.png'
-import diceFive from '../static/dice_five.png'
-import diceSix from '../static/dice_six.png'
+import diceOne from '../static/dice_one.svg'
+import diceTwo from '../static/dice_two.svg'
+import diceThree from '../static/dice_three.svg'
+import diceFour from '../static/dice_four.svg'
+import diceFive from '../static/dice_five.svg'
+import diceSix from '../static/dice_six.svg'
 import { prompts } from '../constants/prompts'
 import board from '../static/board.svg'
 
@@ -29,8 +29,8 @@ const initialState = {
   addPlayerName: "",
   currDiceIndex: 0,
   currPrompt: {
-    boxNumber: 1,
-    text: "blahbl abalb lablablabla blbljasl jkdfghs dijkbhuil"
+    boxNumber: 0,
+    text: "Prompts will show here when you click a panel on the board"
   },
 }
 
@@ -68,7 +68,7 @@ export default class Board extends React.Component {
               }
             })
           }}>
-            <Box>{count}</Box>
+            {/* <Box>{count}</Box> */}
           </GridListTile>
         )
         boxes.push(box)
@@ -134,7 +134,7 @@ export default class Board extends React.Component {
     if (this.state.currDiceIndex === null) {
       currDice = "🤔";
     } else {
-      currDice = <img src={dices[this.state.currDiceIndex]} />
+      currDice = <img src={dices[this.state.currDiceIndex]} className="dices"/>
     }
 
     return (

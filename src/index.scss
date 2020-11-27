@@ -16,10 +16,14 @@ body {
   max-width: 1300px;
   background-color: lightgray;
   .ular-mabok-board {
+    background-image: url("./static/board.svg");
+    overflow: hidden;
+    background-size: 814px 800px;
     .leaderboard-avatar {
       height: "20px";
     }
     width: 800px;
+    height: 800px;
     .ular-mabok-box {
       height: 100px !important;
       border: black solid 0.5px;
@@ -70,6 +74,9 @@ body {
         text-align: center;
         margin-top: 20px;
         font-size: 40px;
+      }
+      .dices {
+        width: 100px;
       }
     }
     .leaderboard {
