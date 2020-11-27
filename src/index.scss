@@ -13,6 +13,7 @@ code {
 }
 
 body {
+  max-width: 1300px;
   background-color: lightgray;
   .ular-mabok-board {
     .leaderboard-avatar {
@@ -33,6 +34,39 @@ body {
     }
     .delete-button:hover {
       cursor: pointer;
+    }
+    .top-bar {
+      display: flex;
+      .ular-mabok-logo {
+        height: 55px;
+        width: 55px;
+        margin: 15px;
+      }
+      .ular-mabok-input {
+        width: 100%;
+        margin-right: 0px;
+        height: 70px;
+      }
+    }
+    .ular-mabok-button-container {
+      margin-top: 15px;
+      padding-right: 10px;
+      .ular-mabok-button {
+        height: 57px;
+        padding: 10px;
+        width: 100%;
+      }
+    }
+  }
+  .dice-roll {
+    width: 100%;
+    border-radius: 20px;
+    background-color: #c3f1f7;
+    margin-top: 15px;
+    .title {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 40px;
     }
   }
 }
