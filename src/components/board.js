@@ -228,7 +228,7 @@ export default class Board extends React.Component {
               <List
                 subheader={
                   <ListSubheader className="subheader">
-                    Leaderboard
+                    Players:
                   </ListSubheader>
                 }
               >
