@@ -51,6 +51,18 @@ export default class Board extends React.Component {
       matrix.push(row)
     }
     this.setState({...this.state, boxes: matrix})
+    document.addEventListener("keyup", event => {
+      if (event.code === 'Space') {
+        this.rollDice()
+      }
+    })
+  }
+
+  rollDice() {
+    this.setState({ ...this.state, currDiceIndex: null })
+    setTimeout(() => {
+      this.setState({ ...this.state, currDiceIndex: (Math.floor(Math.random() * 6)) })
+    }, 1000)
   }
 
   render() {
@@ -202,12 +214,7 @@ export default class Board extends React.Component {
               <Grid className="title" xs={12}>
                 Roll Me!
               </Grid>
-              <Grid className="title" xs={12} onClick={() => {
-                this.setState({ ...this.state, currDiceIndex: null })
-                setTimeout(() => {
-                  this.setState({ ...this.state, currDiceIndex: (Math.floor(Math.random() * 6)) })
-                }, 1000)
-              }}>
+              <Grid className="title" xs={12} onClick={() => this.rollDice()}>
                 {currDice}
               </Grid>
             </Grid>
