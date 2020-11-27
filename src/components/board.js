@@ -8,6 +8,7 @@ import diceThree from '../static/dice_three.png'
 import diceFour from '../static/dice_four.png'
 import diceFive from '../static/dice_five.png'
 import diceSix from '../static/dice_six.png'
+import { prompts } from '../constants/prompts'
 
 const playerGen = (name) => {
   return {
@@ -22,10 +23,14 @@ const dices = [diceOne, diceTwo, diceThree, diceFour, diceFive, diceSix]
 
 const initialState = {
   size: 8,
-  players: players,
+  players: [],
   boxes: [],
   addPlayerName: "",
   currDiceIndex: 0,
+  currPrompt: {
+    boxNumber: 1,
+    text: "blahbl abalb lablablabla blbljasl jkdfghs dijkbhuil"
+  },
 }
 
 export default class Board extends React.Component {
@@ -53,7 +58,15 @@ export default class Board extends React.Component {
         let count = i * this.state.size + j + 1
         if (i % 2 === 1) count = (i + 1) * this.state.size - j
         const box = (
-          <GridListTile id={count} className="ular-mabok-box">
+          <GridListTile id={count} className="ular-mabok-box" onClick={() => {
+            this.setState({
+              ...this.state,
+              currPrompt: {
+                boxNumber: count,
+                text: prompts[count]
+              }
+            })
+          }}>
             <Box>{count}</Box>
           </GridListTile>
         )
@@ -83,7 +96,7 @@ export default class Board extends React.Component {
 
     const listItems = this.state.players.map((p, index) => {
       return (
-        <ListItem>
+        <ListItem className="players">
           <div className="delete-button" onClick={() => {
             this.setState({
               ...this.state,
@@ -126,7 +139,7 @@ export default class Board extends React.Component {
     return (
       <>
         <Grid container className="ular-mabok">
-          <Grid item xs={9}>
+          <Grid item xs={8}>
             <Grid container item>
               <Grid item xs={10} className="top-bar">
                 <Avatar src={logo} className="ular-mabok-logo" />
@@ -159,7 +172,7 @@ export default class Board extends React.Component {
               </GridList>
             </Grid>
           </Grid>
-          <Grid item container xs={3} style={{ paddingLeft: "10px" }}>
+          <Grid item container xs={2} style={{ paddingLeft: "10px" }} className="sidebar">
             <Grid item container xs={12} className="dice-roll">
               <Grid className="title" xs={12}>
                 Roll Me!
@@ -173,10 +186,20 @@ export default class Board extends React.Component {
                 {currDice}
               </Grid>
             </Grid>
-            <Grid item xs={12}>
+            <Grid className="prompt">
+              <Box className="number">
+                #{this.state.currPrompt.boxNumber}
+              </Box>
+              <Box className="content">
+                {this.state.currPrompt.text}
+              </Box>
+            </Grid>
+          </Grid>
+          <Grid item container xs={2} style={{ paddingLeft: "10px" }} className="sidebar">
+            <Grid item xs={12} className="leaderboard">
               <List
                 subheader={
-                  <ListSubheader>
+                  <ListSubheader className="subheader">
                     Leaderboard
                   </ListSubheader>
                 }

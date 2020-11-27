@@ -58,15 +58,43 @@ body {
       }
     }
   }
-  .dice-roll {
-    width: 100%;
-    border-radius: 20px;
-    background-color: #c3f1f7;
-    margin-top: 15px;
-    .title {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 40px;
+  .sidebar {
+    display: block;
+    .dice-roll {
+      width: 90%;
+      border-radius: 20px;
+      background-color: #c3f1f7;
+      margin-top: 15px;
+      height: 250px;
+      .title {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 40px;
+      }
+    }
+    .leaderboard {
+      background-color: #c3f1f7;
+      border-radius: 20px;
+      margin-top: 15px;
+      height: 100%;
+      .subheader {
+        padding-top: 20px;
+        padding-bottom: 20px;
+        font-size: 30px;
+        color: black;
+      }
+    }
+  }
+  .prompt {
+    background-color: #1390a0;
+    margin-top: 35px;
+    width: 90%;
+    .number {
+      padding: 40px 20px 10px 20px;
+    }
+    .content {
+      padding: 20px 10% 40px 10%;
+      width: 80%;
     }
   }
 }
