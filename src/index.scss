@@ -107,3 +107,20 @@ body {
     }
   }
 }
+
+.ular-mabok-popover {
+  .MuiPopover-paper.MuiPaper-elevation8.MuiPaper-rounded {
+    height: 500px;
+    width: 500px;
+    position: absolute;
+    top: 20% !important;
+    left: 20%;
+    padding: 30px;
+  }
+  .number {
+    font-size: 60px;
+  }
+  .text {
+    font-size: 40px;
+  }
+}

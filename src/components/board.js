@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Grid, GridList, GridListTile, List, ListItem, ListSubheader, TextField } from '@material-ui/core'
+import { Avatar, Box, Button, Grid, GridList, GridListTile, List, ListItem, ListSubheader, Popover, TextField, Typography } from '@material-ui/core'
 import React from 'react'
 import Draggable from 'react-draggable'
 import logo from '../static/logo.jpeg'
@@ -32,6 +32,7 @@ const initialState = {
     boxNumber: 0,
     text: "Prompts will show here when you click a panel on the board"
   },
+  isPopoverOpen: false,
 }
 
 export default class Board extends React.Component {
@@ -65,7 +66,8 @@ export default class Board extends React.Component {
               currPrompt: {
                 boxNumber: count,
                 text: prompts[count]
-              }
+              },
+              isPopoverOpen: true
             })
           }}>
             {/* <Box>{count}</Box> */}
@@ -83,10 +85,16 @@ export default class Board extends React.Component {
         if (counter >= this.state.players.length) break;
         const currPlayer = this.state.players[counter]
         const peon = (
-            <Draggable
+          <Draggable
             defaultPosition={{x: (-(100 * i)), y: (-80 + (20 * i))}}
             grid={[100, 100]}
             scale={1}
+            // onDragEnd={(elem, x, y, e) => {
+            //   console.log(elem)
+            //   console.log(x)
+            //   console.log(y)
+            //   console.log(e)
+            // }}
           >
             <Avatar style={{ backgroundColor: currPlayer.color, height: "20px", width: "20px", fontSize: "12px" }}>{currPlayer.initials}</Avatar>
           </Draggable>
@@ -140,6 +148,22 @@ export default class Board extends React.Component {
     return (
       <>
         <Grid container className="ular-mabok">
+          <Popover
+            className="ular-mabok-popover"
+            open={this.state.isPopoverOpen}
+            onClose={() => this.setState({ ...this.state, isPopoverOpen: false })}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <Typography className="number">#{this.state.currPrompt.boxNumber}</Typography>
+            <Typography className="text">{this.state.currPrompt.text}</Typography>
+          </Popover>
           <Grid item xs={8}>
             <Grid container item>
               <Grid item xs={10} className="top-bar">
