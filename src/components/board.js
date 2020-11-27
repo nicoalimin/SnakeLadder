@@ -9,6 +9,7 @@ import diceFour from '../static/dice_four.png'
 import diceFive from '../static/dice_five.png'
 import diceSix from '../static/dice_six.png'
 import { prompts } from '../constants/prompts'
+import board from '../static/board.svg'
 
 const playerGen = (name) => {
   return {
