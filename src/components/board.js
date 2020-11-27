@@ -1,5 +1,16 @@
 import { Avatar, Box, Grid, GridList, GridListTile, List, ListItem, ListSubheader, TextField } from '@material-ui/core'
 import React from 'react'
+import Draggable from 'react-draggable'
+
+const playerGen = (name) => {
+  return {
+    name: name,
+    initials: name,
+    color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+    points: 0
+  }
+}
+const players = [playerGen("p1"), playerGen("p2"), playerGen("p3"), playerGen("p4"), playerGen("p5"), playerGen("p6"), playerGen("p7"), playerGen("p8"), playerGen("p9"), playerGen("p10")]
 
 const initialState = {
   size: 8,
@@ -38,6 +49,26 @@ export default class Board extends React.Component {
           </GridListTile>
         )
         boxes.push(box)
+      }
+    }
+
+    const peons = []
+    const maxSize = 5
+    for (let i = 0; i < maxSize; i++) {
+      for (let j = 0; j < maxSize; j++) {
+        const counter = i * maxSize + j
+        if (counter >= this.state.players.length) break;
+        const currPlayer = this.state.players[counter]
+        const peon = (
+            <Draggable
+            defaultPosition={{x: (-(100 * i)), y: (-80 + (20 * i))}}
+            grid={[100, 100]}
+            scale={1}
+          >
+            <Avatar style={{ backgroundColor: currPlayer.color, height: "20px", width: "20px", fontSize: "12px" }}>{currPlayer.initials}</Avatar>
+          </Draggable>
+        )
+        peons.push(peon)
       }
     }
 
@@ -103,6 +134,7 @@ export default class Board extends React.Component {
             <Grid item>
               <GridList cols={8} className="ular-mabok-board">
                 {boxes}
+                {peons}
               </GridList>
             </Grid>
           </Grid>
