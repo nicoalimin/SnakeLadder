@@ -2,6 +2,12 @@ import { Avatar, Box, Button, Grid, GridList, GridListTile, List, ListItem, List
 import React from 'react'
 import Draggable from 'react-draggable'
 import logo from '../static/logo.jpeg'
+import diceOne from '../static/dice_one.png'
+import diceTwo from '../static/dice_two.png'
+import diceThree from '../static/dice_three.png'
+import diceFour from '../static/dice_four.png'
+import diceFive from '../static/dice_five.png'
+import diceSix from '../static/dice_six.png'
 
 const playerGen = (name) => {
   return {
@@ -12,12 +18,14 @@ const playerGen = (name) => {
   }
 }
 const players = [playerGen("p1"), playerGen("p2"), playerGen("p3"), playerGen("p4"), playerGen("p5"), playerGen("p6"), playerGen("p7"), playerGen("p8"), playerGen("p9"), playerGen("p10")]
+const dices = [diceOne, diceTwo, diceThree, diceFour, diceFive, diceSix]
 
 const initialState = {
   size: 8,
   players: players,
   boxes: [],
-  addPlayerName: ""
+  addPlayerName: "",
+  currDiceIndex: 0,
 }
 
 export default class Board extends React.Component {
@@ -108,6 +116,13 @@ export default class Board extends React.Component {
       })
     }
 
+    let currDice;
+    if (this.state.currDiceIndex === null) {
+      currDice = "🤔";
+    } else {
+      currDice = <img src={dices[this.state.currDiceIndex]} />
+    }
+
     return (
       <>
         <Grid container className="ular-mabok">
@@ -149,8 +164,13 @@ export default class Board extends React.Component {
               <Grid className="title" xs={12}>
                 Roll Me!
               </Grid>
-              <Grid className="title" xs={12}>
-                Roll Me!
+              <Grid className="title" xs={12} onClick={() => {
+                this.setState({ ...this.state, currDiceIndex: null })
+                setTimeout(() => {
+                  this.setState({ ...this.state, currDiceIndex: (Math.floor(Math.random() * 6)) })
+                }, 1000)
+              }}>
+                {currDice}
               </Grid>
             </Grid>
             <Grid item xs={12}>
