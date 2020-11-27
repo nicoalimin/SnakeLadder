@@ -165,9 +165,9 @@ export default class Board extends React.Component {
             <Typography className="text">{this.state.currPrompt.text}</Typography>
           </Popover>
           <Grid item xs={8}>
-            <Grid container item>
-              <Grid item xs={10} className="top-bar">
-                <Avatar src={logo} className="ular-mabok-logo" />
+            <Grid container item className="top-bar">
+              <Grid item xs={10}>
+                {/* <Avatar src={logo} className="ular-mabok-logo" /> */}
                 <TextField
                   className="ular-mabok-input"
                   label="Add player"
@@ -218,6 +218,9 @@ export default class Board extends React.Component {
               <Box className="content">
                 {this.state.currPrompt.text}
               </Box>
+            </Grid>
+            <Grid className="logo">
+              <img src={logo} />
             </Grid>
           </Grid>
           <Grid item container xs={2} style={{ paddingLeft: "10px" }} className="sidebar">

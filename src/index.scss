@@ -41,6 +41,7 @@ body {
     }
     .top-bar {
       display: flex;
+      padding: 0 17px 0 25px;
       .ular-mabok-logo {
         height: 55px;
         width: 55px;
@@ -64,6 +65,14 @@ body {
   }
   .sidebar {
     display: block;
+    position: relative;
+    .logo {
+      position: absolute;
+      bottom: 0%;
+      img {
+        width: 90%;
+      }
+    }
     .dice-roll {
       width: 90%;
       border-radius: 20px;
