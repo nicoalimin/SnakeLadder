@@ -48,7 +48,7 @@ export const Board = (props) => {
   useEffect(() => {
     document.addEventListener("keyup", (event) => {
       if (event.code === "Space") {
-        this.rollDice();
+        rollDice();
       }
     });
   });
@@ -265,7 +265,7 @@ export const Board = (props) => {
               <Grid className="title" xs={12}>
                 Roll Me!
               </Grid>
-              <Grid className="title" xs={12} onClick={() => this.rollDice()}>
+              <Grid className="title" xs={12} onClick={() => rollDice()}>
                 {state.currDiceIndex === null ? (
                   "🤔"
                 ) : (
