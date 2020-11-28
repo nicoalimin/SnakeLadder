@@ -119,11 +119,11 @@ export const Board = (props) => {
   for (let i = 0; i < maxSize; i++) {
     for (let j = 0; j < maxSize; j++) {
       const counter = i * maxSize + j;
-      if (counter >= state.players.length) break;
-      const currPlayer = state.players[counter];
+      if (counter >= players.length) break;
+      const currPlayer = players[counter];
       const peon = (
         <Draggable
-          defaultPosition={{ x: -(100 * i), y: -80 + 20 * i }}
+          defaultPosition={{ x: -50, y: 0 }}
           grid={[100, 100]}
           scale={1}
           // onDragEnd={(elem, x, y, e) => {
@@ -141,7 +141,7 @@ export const Board = (props) => {
               fontSize: "12px",
             }}
           >
-            {currPlayer.initials}
+            {currPlayer?.name?.substring(0, 2)}
           </Avatar>
         </Draggable>
       );
@@ -314,7 +314,7 @@ export const Board = (props) => {
               onClick={() => rollDice()}
             >
               {!diceValue ? (
-                "🤔"
+                "🎲"
               ) : (
                 <img
                   alt={`dice face with ${state.currDiceIndex} dots.`}
