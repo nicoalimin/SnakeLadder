@@ -31,20 +31,8 @@ const dices = [diceOne, diceTwo, diceThree, diceFour, diceFive, diceSix];
 
 const DIMENSION_SIZE = 8;
 
-const initialState = {
-  size: DIMENSION_SIZE,
-  players: [],
-  boxes: new Array(DIMENSION_SIZE).map(() => new Array(DIMENSION_SIZE)),
-  addPlayerName: "",
-  currDiceIndex: 0,
-  currPrompt: {
-    boxNumber: 0,
-    text: "Prompts will show here when you click a panel on the board",
-  },
-};
-
 export const Board = (props) => {
-  const [state, setState] = useState(initialState);
+  const [addPlayerNameInputValue, setAddPlayerNameInputValue] = useState("");
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const dispatch = useDispatch();
@@ -60,15 +48,9 @@ export const Board = (props) => {
   const promptNumber = useSelector(
     (state) => state.game.currentTurn.promptNumber
   );
-  const promptMessage = useSelector(state => state.board.prompts[promptNumber]);
-
-  // useEffect(() => {
-  //   document.addEventListener("keyup", (event) => {
-  //     if (event.code === "Space") {
-  //       rollDice();
-  //     }
-  //   });
-  // }, []);
+  const promptMessage = useSelector(
+    (state) => state.board.prompts[promptNumber]
+  );
 
   useEffect(() => {
     dispatch(asyncThunks.simulateAGame());
@@ -79,16 +61,6 @@ export const Board = (props) => {
       setIsPopoverOpen(true);
     }
   }, [promptNumber]);
-
-  function rollDice() {
-    setState({ ...state, currDiceIndex: null });
-    setTimeout(() => {
-      setState({
-        ...state,
-        currDiceIndex: Math.floor(Math.random() * 6),
-      });
-    }, 1000);
-  }
 
   const totalTiles = DIMENSION_SIZE * DIMENSION_SIZE;
   const boxes = new Array(totalTiles).fill({}).map((_, id) => {
@@ -101,15 +73,6 @@ export const Board = (props) => {
       <GridListTile
         id={count}
         className="ular-mabok-box"
-        onClick={() => {
-          // setState({
-          //   currPrompt: {
-          //     boxNumber: count,
-          //     text: prompts[count],
-          //   },
-          // });
-          // setIsPopoverOpen(true);
-        }}
       />
     );
   });
@@ -123,7 +86,7 @@ export const Board = (props) => {
       const currPlayer = players[counter];
       const peon = (
         <Draggable
-          defaultPosition={{ x: -50, y: 0 }}
+          defaultPosition={{ x: -(100 * i), y: -80 + 20 * i }}
           grid={[100, 100]}
           scale={1}
           // onDragEnd={(elem, x, y, e) => {
@@ -155,17 +118,6 @@ export const Board = (props) => {
         className="players"
         style={{ backgroundColor: activePlayer?.id === p.id && "#71EB46" }}
       >
-        {/* <div
-          className="delete-button"
-          onClick={() => {
-            setState({
-              ...state,
-              players: state.players.filter((pl) => pl.name !== p.name),
-            });
-          }}
-        >
-          x
-        </div> */}
         &nbsp;{index + 1}.&nbsp;
         <Avatar
           style={{
@@ -181,22 +133,6 @@ export const Board = (props) => {
       </ListItem>
     );
   });
-
-  // const handleAddPlayer = () => {
-  //   if (state.addPlayerName === "") return;
-  //   if (!!state.players.find((p) => p.name === state.addPlayerName)) return;
-  //   const player = {
-  //     name: state.addPlayerName,
-  //     initials: state.addPlayerName.substring(0, 2),
-  //     color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-  //     points: 0,
-  //   };
-  //   setState({
-  //     ...state,
-  //     players: [...state.players, player].sort((a, b) => a.points - b.points),
-  //     addPlayerName: initialState.addPlayerName,
-  //   });
-  // };
 
   return (
     <>
@@ -214,9 +150,7 @@ export const Board = (props) => {
             horizontal: "center",
           }}
         >
-          <Typography className="number">
-            #{promptNumber}
-          </Typography>
+          <Typography className="number">#{promptNumber}</Typography>
           <Typography className="text">{promptMessage}</Typography>
           <Button
             variant="contained"
@@ -237,29 +171,23 @@ export const Board = (props) => {
                 className="ular-mabok-input"
                 label="Add player"
                 placeholder="Insert name here..."
-                value={state.addPlayerName}
+                value={addPlayerNameInputValue}
                 margin="normal"
                 InputLabelProps={{
                   shrink: true,
                 }}
                 variant="outlined"
-                onChange={(e) => {
-                  setState({
-                    ...state,
-                    addPlayerName: e.target.value,
-                  });
-                }}
+                onChange={(e) => setAddPlayerNameInputValue(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     store.dispatch(
                       playersActions.add({
-                        name: state.addPlayerName,
+                        name: addPlayerNameInputValue,
                         color: `#${Math.floor(
                           Math.random() * 16777215
                         ).toString(16)}`,
                       })
                     );
-                    // handleAddPlayer();
                   }
                 }}
               />
@@ -272,13 +200,12 @@ export const Board = (props) => {
                 onClick={() => {
                   store.dispatch(
                     playersActions.add({
-                      name: state.addPlayerName,
+                      name: addPlayerNameInputValue,
                       color: `#${Math.floor(Math.random() * 16777215).toString(
                         16
                       )}`,
                     })
                   );
-                  // handleAddPlayer();
                 }}
               >
                 Add Player
@@ -292,8 +219,8 @@ export const Board = (props) => {
               style={{ margin: "auto" }}
             >
               {boxes}
-              {peons}
             </GridList>
+            <ul style={{ zIndex: 2, margin: "auto" }}>{peons}</ul>
           </Grid>
         </Grid>
         <Grid
@@ -311,20 +238,21 @@ export const Board = (props) => {
               className="title"
               xs={12}
               minHeight="50px"
-              onClick={() => rollDice()}
             >
               {!diceValue ? (
-                "🎲"
+                "🤔"
               ) : (
                 <img
-                  alt={`dice face with ${state.currDiceIndex} dots.`}
+                  alt={`dice face with ${diceValue} dots.`}
                   src={dices[diceValue - 1]}
                   className="dices"
                 />
               )}
             </Grid>
             <Grid xs={12} container alignItems="center" justify="center">
-              <Typography variant="overline">It's {activePlayer?.name}'s turn.</Typography>
+              <Typography variant="overline">
+                It's {activePlayer?.name}'s turn.
+              </Typography>
               <Button
                 variant="contained"
                 color="primary"
