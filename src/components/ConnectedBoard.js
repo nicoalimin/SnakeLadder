@@ -15,6 +15,7 @@ import {
 import React from "react";
 import Draggable from "react-draggable";
 import { prompts } from "../constants/prompts";
+import { playersActions } from "../reducers/root";
 import diceFive from "../static/dice_five.svg";
 import diceFour from "../static/dice_four.svg";
 import diceOne from "../static/dice_one.svg";
@@ -22,6 +23,7 @@ import diceSix from "../static/dice_six.svg";
 import diceThree from "../static/dice_three.svg";
 import diceTwo from "../static/dice_two.svg";
 import logo from "../static/logo.jpeg";
+import { store } from "../store/store";
 
 const dices = [diceOne, diceTwo, diceThree, diceFour, diceFive, diceSix];
 
@@ -68,9 +70,10 @@ export class Board extends React.Component {
     const totalTiles = DIMENSION_SIZE * DIMENSION_SIZE;
     const boxes = new Array(totalTiles).fill({}).map((_, id) => {
       let count = totalTiles - id;
-      count += Math.floor((totalTiles - id - 1) / 8) % 2 === 0
-                              ? -DIMENSION_SIZE + (id % DIMENSION_SIZE) * 2 + 1
-                              : 0;
+      count +=
+        Math.floor((totalTiles - id - 1) / 8) % 2 === 0
+          ? -DIMENSION_SIZE + (id % DIMENSION_SIZE) * 2 + 1
+          : 0;
       return (
         <GridListTile
           id={count}
@@ -218,7 +221,12 @@ export class Board extends React.Component {
                     });
                   }}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") handleAddPlayer();
+                    if (e.key === "Enter") {
+                      store.dispatch(
+                        playersActions.add({ name: this.state.addPlayerName })
+                      );
+                      handleAddPlayer();
+                    }
                   }}
                 />
               </Grid>
@@ -227,7 +235,12 @@ export class Board extends React.Component {
                   variant="contained"
                   color="primary"
                   className="ular-mabok-button"
-                  onClick={() => handleAddPlayer()}
+                  onClick={() => {
+                    store.dispatch(
+                      playersActions.add({ name: this.state.addPlayerName })
+                    );
+                    handleAddPlayer();
+                  }}
                 >
                   Add Player
                 </Button>
