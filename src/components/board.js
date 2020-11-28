@@ -10,6 +10,8 @@ import diceFive from '../static/dice_five.svg'
 import diceSix from '../static/dice_six.svg'
 import { prompts } from '../constants/prompts'
 import board from '../static/board.svg'
+import { store } from '../store/store'
+import { asyncThunks } from '../actionCreators/actionCreators'
 
 const playerGen = (name) => {
   return {
@@ -56,6 +58,8 @@ export default class Board extends React.Component {
         this.rollDice()
       }
     })
+
+    store.dispatch(asyncThunks.simulateAGame());
   }
 
   rollDice() {
