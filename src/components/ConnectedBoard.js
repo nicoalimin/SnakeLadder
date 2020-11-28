@@ -38,12 +38,12 @@ const initialState = {
   currPrompt: {
     boxNumber: 0,
     text: "Prompts will show here when you click a panel on the board",
-  },
-  isPopoverOpen: false,
+  }
 };
 
 export const Board = (props) => {
   const [state, setState] = useState(initialState);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   useEffect(() => {
     document.addEventListener("keyup", (event) => {
@@ -80,8 +80,8 @@ export const Board = (props) => {
               boxNumber: count,
               text: prompts[count],
             },
-            isPopoverOpen: true,
           });
+          setIsPopoverOpen(true);
         }}
       />
     );
@@ -173,8 +173,8 @@ export const Board = (props) => {
       <Grid container className="ular-mabok">
         <Popover
           className="ular-mabok-popover"
-          open={state.isPopoverOpen}
-          onClose={() => setState({ ...state, isPopoverOpen: false })}
+          open={isPopoverOpen}
+          onClose={() => setIsPopoverOpen(false)}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "center",
