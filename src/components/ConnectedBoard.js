@@ -66,24 +66,29 @@ export class Board extends React.Component {
 
   render() {
     const totalTiles = DIMENSION_SIZE * DIMENSION_SIZE;
-    const boxes = (new Array(totalTiles).fill({})).map((_, id) => {
-      const count =  totalTiles - id                                              // Reverse the order.
-      + Math.floor((totalTiles - id - 1) / 8) % 2 === 0                           // If odd row,
-                              ? -DIMENSION_SIZE + (id % DIMENSION_SIZE) * 2 + 1   // subtract the row size and add remainder of id * 2.
-                              : 0;
-      return <GridListTile
-        id={count}
-        className="ular-mabok-box"
-        onClick={() => {
-          this.setState({
-            currPrompt: {
-              boxNumber: count,
-              text: prompts[count],
-            },
-            isPopoverOpen: true,
-          });
-        }}
-      />
+    const boxes = new Array(totalTiles).fill({}).map((_, id) => {
+      const count =
+        totalTiles -
+          id + // Reverse the order.
+          (Math.floor((totalTiles - id - 1) / 8) % 2) ===
+        0 // If odd row,
+          ? -DIMENSION_SIZE + (id % DIMENSION_SIZE) * 2 + 1 // subtract the row size and add remainder of id * 2.
+          : 0;
+      return (
+        <GridListTile
+          id={count}
+          className="ular-mabok-box"
+          onClick={() => {
+            this.setState({
+              currPrompt: {
+                boxNumber: count,
+                text: prompts[count],
+              },
+              isPopoverOpen: true,
+            });
+          }}
+        />
+      );
     });
 
     const peons = [];
@@ -170,15 +175,6 @@ export class Board extends React.Component {
       });
     };
 
-    let currDice;
-    if (this.state.currDiceIndex === null) {
-      currDice = "🤔";
-    } else {
-      currDice = (
-        <img src={dices[this.state.currDiceIndex]} className="dices" />
-      );
-    }
-
     return (
       <>
         <Grid container className="ular-mabok">
@@ -263,7 +259,14 @@ export class Board extends React.Component {
                 Roll Me!
               </Grid>
               <Grid className="title" xs={12} onClick={() => this.rollDice()}>
-                {currDice}
+                {this.state.currDiceIndex === null ? (
+                  "🤔"
+                ) : (
+                  <img
+                    src={dices[this.state.currDiceIndex]}
+                    className="dices"
+                  />
+                )}
               </Grid>
             </Grid>
             <Grid className="prompt">
