@@ -21,6 +21,8 @@ asyncThunks.simulateAGame = createAsyncThunk(
     thunkApi.dispatch(gameActions.init({ playerIds }));
 
     // Simulate a game.
+    thunkApi.dispatch(gameActions.start());
+
     await thunkApi.dispatch(asyncThunks.executeATurn());
     thunkApi.dispatch(gameActions.nextTurn());
 
