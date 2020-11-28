@@ -263,6 +263,7 @@ export class Board extends React.Component {
                   "🤔"
                 ) : (
                   <img
+                    alt={`dice face with ${this.state.currDiceIndex} dots.`}
                     src={dices[this.state.currDiceIndex]}
                     className="dices"
                   />
