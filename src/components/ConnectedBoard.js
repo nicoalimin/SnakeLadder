@@ -63,248 +63,238 @@ export const Board = (props) => {
     }, 1000);
   }
 
-  function render() {
-    const totalTiles = DIMENSION_SIZE * DIMENSION_SIZE;
-    const boxes = new Array(totalTiles).fill({}).map((_, id) => {
-      let count = totalTiles - id;
-      count +=
-        Math.floor((totalTiles - id - 1) / 8) % 2 === 0
-          ? -DIMENSION_SIZE + (id % DIMENSION_SIZE) * 2 + 1
-          : 0;
-      return (
-        <GridListTile
-          id={count}
-          className="ular-mabok-box"
-          onClick={() => {
-            setState({
-              currPrompt: {
-                boxNumber: count,
-                text: prompts[count],
-              },
-              isPopoverOpen: true,
-            });
-          }}
-        />
-      );
-    });
+  const totalTiles = DIMENSION_SIZE * DIMENSION_SIZE;
+  const boxes = new Array(totalTiles).fill({}).map((_, id) => {
+    let count = totalTiles - id;
+    count +=
+      Math.floor((totalTiles - id - 1) / 8) % 2 === 0
+        ? -DIMENSION_SIZE + (id % DIMENSION_SIZE) * 2 + 1
+        : 0;
+    return (
+      <GridListTile
+        id={count}
+        className="ular-mabok-box"
+        onClick={() => {
+          setState({
+            currPrompt: {
+              boxNumber: count,
+              text: prompts[count],
+            },
+            isPopoverOpen: true,
+          });
+        }}
+      />
+    );
+  });
 
-    const peons = [];
-    const maxSize = 5;
-    for (let i = 0; i < maxSize; i++) {
-      for (let j = 0; j < maxSize; j++) {
-        const counter = i * maxSize + j;
-        if (counter >= state.players.length) break;
-        const currPlayer = state.players[counter];
-        const peon = (
-          <Draggable
-            defaultPosition={{ x: -(100 * i), y: -80 + 20 * i }}
-            grid={[100, 100]}
-            scale={1}
-            // onDragEnd={(elem, x, y, e) => {
-            //   console.log(elem)
-            //   console.log(x)
-            //   console.log(y)
-            //   console.log(e)
-            // }}
-          >
-            <Avatar
-              style={{
-                backgroundColor: currPlayer.color,
-                height: "20px",
-                width: "20px",
-                fontSize: "12px",
-              }}
-            >
-              {currPlayer.initials}
-            </Avatar>
-          </Draggable>
-        );
-        peons.push(peon);
-      }
-    }
-
-    const listItems = state.players.map((p, index) => {
-      return (
-        <ListItem className="players">
-          <div
-            className="delete-button"
-            onClick={() => {
-              setState({
-                ...state,
-                players: state.players.filter((pl) => pl.name !== p.name),
-              });
-            }}
-          >
-            x
-          </div>
-          &nbsp;{index + 1}.&nbsp;
+  const peons = [];
+  const maxSize = 5;
+  for (let i = 0; i < maxSize; i++) {
+    for (let j = 0; j < maxSize; j++) {
+      const counter = i * maxSize + j;
+      if (counter >= state.players.length) break;
+      const currPlayer = state.players[counter];
+      const peon = (
+        <Draggable
+          defaultPosition={{ x: -(100 * i), y: -80 + 20 * i }}
+          grid={[100, 100]}
+          scale={1}
+          // onDragEnd={(elem, x, y, e) => {
+          //   console.log(elem)
+          //   console.log(x)
+          //   console.log(y)
+          //   console.log(e)
+          // }}
+        >
           <Avatar
             style={{
-              backgroundColor: p.color,
+              backgroundColor: currPlayer.color,
               height: "20px",
               width: "20px",
               fontSize: "12px",
             }}
           >
-            {p.initials}
+            {currPlayer.initials}
           </Avatar>
-          &nbsp; - &nbsp;{p.name}
-        </ListItem>
+        </Draggable>
       );
-    });
+      peons.push(peon);
+    }
+  }
 
-    const handleAddPlayer = () => {
-      if (state.addPlayerName === "") return;
-      if (!!state.players.find((p) => p.name === state.addPlayerName))
-        return;
-      const player = {
-        name: state.addPlayerName,
-        initials: state.addPlayerName.substring(0, 2),
-        color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-        points: 0,
-      };
-      setState({
-        ...state,
-        players: [...state.players, player].sort(
-          (a, b) => a.points - b.points
-        ),
-        addPlayerName: initialState.addPlayerName,
-      });
-    };
-
+  const listItems = state.players.map((p, index) => {
     return (
-      <>
-        <Grid container className="ular-mabok">
-          <Popover
-            className="ular-mabok-popover"
-            open={state.isPopoverOpen}
-            onClose={() =>
-              setState({ ...state, isPopoverOpen: false })
-            }
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "center",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "center",
-            }}
-          >
-            <Typography className="number">
-              #{state.currPrompt.boxNumber}
-            </Typography>
-            <Typography className="text">
-              {state.currPrompt.text}
-            </Typography>
-          </Popover>
-          <Grid item xs={8}>
-            <Grid container item className="top-bar">
-              <Grid item xs={10}>
-                {/* <Avatar src={logo} className="ular-mabok-logo" /> */}
-                <TextField
-                  className="ular-mabok-input"
-                  label="Add player"
-                  placeholder="Insert name here..."
-                  value={state.addPlayerName}
-                  margin="normal"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  variant="outlined"
-                  onChange={(e) => {
-                    setState({
-                      ...state,
-                      addPlayerName: e.target.value,
-                    });
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      store.dispatch(
-                        playersActions.add({ name: state.addPlayerName })
-                      );
-                      handleAddPlayer();
-                    }
-                  }}
-                />
-              </Grid>
-              <Grid item xs={2} className="ular-mabok-button-container">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className="ular-mabok-button"
-                  onClick={() => {
+      <ListItem className="players">
+        <div
+          className="delete-button"
+          onClick={() => {
+            setState({
+              ...state,
+              players: state.players.filter((pl) => pl.name !== p.name),
+            });
+          }}
+        >
+          x
+        </div>
+        &nbsp;{index + 1}.&nbsp;
+        <Avatar
+          style={{
+            backgroundColor: p.color,
+            height: "20px",
+            width: "20px",
+            fontSize: "12px",
+          }}
+        >
+          {p.initials}
+        </Avatar>
+        &nbsp; - &nbsp;{p.name}
+      </ListItem>
+    );
+  });
+
+  const handleAddPlayer = () => {
+    if (state.addPlayerName === "") return;
+    if (!!state.players.find((p) => p.name === state.addPlayerName)) return;
+    const player = {
+      name: state.addPlayerName,
+      initials: state.addPlayerName.substring(0, 2),
+      color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+      points: 0,
+    };
+    setState({
+      ...state,
+      players: [...state.players, player].sort((a, b) => a.points - b.points),
+      addPlayerName: initialState.addPlayerName,
+    });
+  };
+
+  return (
+    <>
+      <Grid container className="ular-mabok">
+        <Popover
+          className="ular-mabok-popover"
+          open={state.isPopoverOpen}
+          onClose={() => setState({ ...state, isPopoverOpen: false })}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <Typography className="number">
+            #{state.currPrompt.boxNumber}
+          </Typography>
+          <Typography className="text">{state.currPrompt.text}</Typography>
+        </Popover>
+        <Grid item xs={8}>
+          <Grid container item className="top-bar">
+            <Grid item xs={10}>
+              {/* <Avatar src={logo} className="ular-mabok-logo" /> */}
+              <TextField
+                className="ular-mabok-input"
+                label="Add player"
+                placeholder="Insert name here..."
+                value={state.addPlayerName}
+                margin="normal"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+                onChange={(e) => {
+                  setState({
+                    ...state,
+                    addPlayerName: e.target.value,
+                  });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
                     store.dispatch(
                       playersActions.add({ name: state.addPlayerName })
                     );
                     handleAddPlayer();
-                  }}
-                >
-                  Add Player
-                </Button>
-              </Grid>
+                  }
+                }}
+              />
             </Grid>
-            <Grid item>
-              <GridList
-                cols={8}
-                className="ular-mabok-board"
-                style={{ margin: "auto" }}
+            <Grid item xs={2} className="ular-mabok-button-container">
+              <Button
+                variant="contained"
+                color="primary"
+                className="ular-mabok-button"
+                onClick={() => {
+                  store.dispatch(
+                    playersActions.add({ name: state.addPlayerName })
+                  );
+                  handleAddPlayer();
+                }}
               >
-                {boxes}
-                {peons}
-              </GridList>
+                Add Player
+              </Button>
             </Grid>
           </Grid>
-          <Grid
-            item
-            container
-            xs={2}
-            style={{ paddingLeft: "10px" }}
-            className="sidebar"
-          >
-            <Grid item container xs={12} className="dice-roll">
-              <Grid className="title" xs={12}>
-                Roll Me!
-              </Grid>
-              <Grid className="title" xs={12} onClick={() => rollDice()}>
-                {state.currDiceIndex === null ? (
-                  "🤔"
-                ) : (
-                  <img
-                    alt={`dice face with ${state.currDiceIndex} dots.`}
-                    src={dices[state.currDiceIndex]}
-                    className="dices"
-                  />
-                )}
-              </Grid>
-            </Grid>
-            <Grid className="prompt">
-              <Box className="number">#{state.currPrompt.boxNumber}</Box>
-              <Box className="content">{state.currPrompt.text}</Box>
-            </Grid>
-            <Grid className="logo">
-              <img src={logo} />
-            </Grid>
-          </Grid>
-          <Grid
-            item
-            container
-            xs={2}
-            style={{ paddingLeft: "10px" }}
-            className="sidebar"
-          >
-            <Grid item xs={12} className="leaderboard">
-              <List
-                subheader={
-                  <ListSubheader className="subheader">Players</ListSubheader>
-                }
-              >
-                {listItems}
-              </List>
-            </Grid>
+          <Grid item>
+            <GridList
+              cols={8}
+              className="ular-mabok-board"
+              style={{ margin: "auto" }}
+            >
+              {boxes}
+              {peons}
+            </GridList>
           </Grid>
         </Grid>
-      </>
-    );
-  }
-  return render();
-}
+        <Grid
+          item
+          container
+          xs={2}
+          style={{ paddingLeft: "10px" }}
+          className="sidebar"
+        >
+          <Grid item container xs={12} className="dice-roll">
+            <Grid className="title" xs={12}>
+              Roll Me!
+            </Grid>
+            <Grid className="title" xs={12} onClick={() => rollDice()}>
+              {state.currDiceIndex === null ? (
+                "🤔"
+              ) : (
+                <img
+                  alt={`dice face with ${state.currDiceIndex} dots.`}
+                  src={dices[state.currDiceIndex]}
+                  className="dices"
+                />
+              )}
+            </Grid>
+          </Grid>
+          <Grid className="prompt">
+            <Box className="number">#{state.currPrompt.boxNumber}</Box>
+            <Box className="content">{state.currPrompt.text}</Box>
+          </Grid>
+          <Grid className="logo">
+            <img alt="logo" src={logo} />
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          container
+          xs={2}
+          style={{ paddingLeft: "10px" }}
+          className="sidebar"
+        >
+          <Grid item xs={12} className="leaderboard">
+            <List
+              subheader={
+                <ListSubheader className="subheader">Players</ListSubheader>
+              }
+            >
+              {listItems}
+            </List>
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
+  );
+};
