@@ -10,6 +10,7 @@ export const playersActions = {
 export const gameActions = {
   init: createAction("game/init"),
   start: createAction("game/start"),
+  addPlayerToGame: createAction("game/addPlayerToGame"),
   rollDice: createAction("game/rollDice"),
   movePlayer: createAction("game/movePlayer"),
   nextTurn: createAction("game/nextTurn"),
@@ -36,6 +37,10 @@ const GAME_STATE = {
   DONE: "DONE",
 };
 
+const initializePlayerState = () => ({
+  position: 1,
+});
+
 export const gameReducer = createReducer(
   {
     state: GAME_STATE.NOT_STARTED,
@@ -55,7 +60,7 @@ export const gameReducer = createReducer(
 
         // Resets All players to tile 1.
         state.playersState = playerIds.reduce((acc, id) => {
-          acc[id] = { position: 1 };
+          acc[id] = initializePlayerState();
           return acc;
         }, {});
       })
@@ -76,10 +81,18 @@ export const gameReducer = createReducer(
         const currentPlayerId = state.currentTurn.playerId;
 
         const nextPlayerId =
-        playerIds[(playerIds.indexOf(currentPlayerId) + 1) % playerIds.length];
+          playerIds[
+            (playerIds.indexOf(currentPlayerId) + 1) % playerIds.length
+          ];
         state.currentTurn.playerId = nextPlayerId;
         state.currentTurn.diceValue = undefined;
-      });
+      })
+      .addCase(
+        gameActions.addPlayerToGame,
+        (state, { payload: { playerId } }) => {
+          state.playersState[playerId] = initializePlayerState();
+        }
+      );
   }
 );
 

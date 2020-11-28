@@ -14,8 +14,10 @@ import {
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import Draggable from "react-draggable";
+import { useDispatch, useSelector } from "react-redux";
+import { asyncThunks } from "../actionCreators/actionCreators";
 import { prompts } from "../constants/prompts";
-import { playersActions } from "../reducers/root";
+import { gameActions, playersActions } from "../reducers/root";
 import diceFive from "../static/dice_five.svg";
 import diceFour from "../static/dice_four.svg";
 import diceOne from "../static/dice_one.svg";
@@ -38,20 +40,35 @@ const initialState = {
   currPrompt: {
     boxNumber: 0,
     text: "Prompts will show here when you click a panel on the board",
-  }
+  },
 };
 
 export const Board = (props) => {
   const [state, setState] = useState(initialState);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
+  const dispatch = useDispatch();
+  const diceValue = useSelector((state) => state.game.currentTurn.diceValue);
+  const players = useSelector((state) =>
+    Object.keys(state.game.playersState).map(
+      (playerId) => state.players[playerId]
+    )
+  );
+  const activePlayer = useSelector(
+    (state) => state.players[state.game.currentTurn.playerId]
+  );
+
+  // useEffect(() => {
+  //   document.addEventListener("keyup", (event) => {
+  //     if (event.code === "Space") {
+  //       rollDice();
+  //     }
+  //   });
+  // }, []);
+
   useEffect(() => {
-    document.addEventListener("keyup", (event) => {
-      if (event.code === "Space") {
-        rollDice();
-      }
-    });
-  });
+    dispatch(asyncThunks.simulateAGame());
+  }, []);
 
   function rollDice() {
     setState({ ...state, currDiceIndex: null });
@@ -75,13 +92,13 @@ export const Board = (props) => {
         id={count}
         className="ular-mabok-box"
         onClick={() => {
-          setState({
-            currPrompt: {
-              boxNumber: count,
-              text: prompts[count],
-            },
-          });
-          setIsPopoverOpen(true);
+          // setState({
+          //   currPrompt: {
+          //     boxNumber: count,
+          //     text: prompts[count],
+          //   },
+          // });
+          // setIsPopoverOpen(true);
         }}
       />
     );
@@ -122,10 +139,13 @@ export const Board = (props) => {
     }
   }
 
-  const listItems = state.players.map((p, index) => {
+  const listItems = players.map((p, index) => {
     return (
-      <ListItem className="players">
-        <div
+      <ListItem
+        className="players"
+        style={{ backgroundColor: activePlayer?.id === p.id && "#71EB46" }}
+      >
+        {/* <div
           className="delete-button"
           onClick={() => {
             setState({
@@ -135,7 +155,7 @@ export const Board = (props) => {
           }}
         >
           x
-        </div>
+        </div> */}
         &nbsp;{index + 1}.&nbsp;
         <Avatar
           style={{
@@ -145,28 +165,28 @@ export const Board = (props) => {
             fontSize: "12px",
           }}
         >
-          {p.initials}
+          {p.name.substring(0, 2)}
         </Avatar>
         &nbsp; - &nbsp;{p.name}
       </ListItem>
     );
   });
 
-  const handleAddPlayer = () => {
-    if (state.addPlayerName === "") return;
-    if (!!state.players.find((p) => p.name === state.addPlayerName)) return;
-    const player = {
-      name: state.addPlayerName,
-      initials: state.addPlayerName.substring(0, 2),
-      color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-      points: 0,
-    };
-    setState({
-      ...state,
-      players: [...state.players, player].sort((a, b) => a.points - b.points),
-      addPlayerName: initialState.addPlayerName,
-    });
-  };
+  // const handleAddPlayer = () => {
+  //   if (state.addPlayerName === "") return;
+  //   if (!!state.players.find((p) => p.name === state.addPlayerName)) return;
+  //   const player = {
+  //     name: state.addPlayerName,
+  //     initials: state.addPlayerName.substring(0, 2),
+  //     color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+  //     points: 0,
+  //   };
+  //   setState({
+  //     ...state,
+  //     players: [...state.players, player].sort((a, b) => a.points - b.points),
+  //     addPlayerName: initialState.addPlayerName,
+  //   });
+  // };
 
   return (
     <>
@@ -212,9 +232,14 @@ export const Board = (props) => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     store.dispatch(
-                      playersActions.add({ name: state.addPlayerName })
+                      playersActions.add({
+                        name: state.addPlayerName,
+                        color: `#${Math.floor(
+                          Math.random() * 16777215
+                        ).toString(16)}`,
+                      })
                     );
-                    handleAddPlayer();
+                    // handleAddPlayer();
                   }
                 }}
               />
@@ -226,9 +251,14 @@ export const Board = (props) => {
                 className="ular-mabok-button"
                 onClick={() => {
                   store.dispatch(
-                    playersActions.add({ name: state.addPlayerName })
+                    playersActions.add({
+                      name: state.addPlayerName,
+                      color: `#${Math.floor(Math.random() * 16777215).toString(
+                        16
+                      )}`,
+                    })
                   );
-                  handleAddPlayer();
+                  // handleAddPlayer();
                 }}
               >
                 Add Player
@@ -257,16 +287,32 @@ export const Board = (props) => {
             <Grid className="title" xs={12}>
               Roll Me!
             </Grid>
-            <Grid className="title" xs={12} onClick={() => rollDice()}>
-              {state.currDiceIndex === null ? (
+            <Grid
+              className="title"
+              xs={12}
+              minHeight="50px"
+              onClick={() => rollDice()}
+            >
+              {!diceValue ? (
                 "🤔"
               ) : (
                 <img
                   alt={`dice face with ${state.currDiceIndex} dots.`}
-                  src={dices[state.currDiceIndex]}
+                  src={dices[diceValue - 1]}
                   className="dices"
                 />
               )}
+            </Grid>
+            <Grid xs={12} container alignItems="center" justify="center">
+              <Button
+                variant="contained"
+                color="primary"
+                margin="auto"
+                style={{ visibility: !diceValue ? "visible" : "hidden" }}
+                onClick={() => dispatch(asyncThunks.executeATurn())}
+              >
+                Roll
+              </Button>
             </Grid>
           </Grid>
           <Grid className="prompt">
