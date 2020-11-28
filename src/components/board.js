@@ -59,7 +59,7 @@ export default class Board extends React.Component {
       }
     })
 
-    store.dispatch(asyncThunks.simulateAGame());
+    // store.dispatch(asyncThunks.simulateAGame());
   }
 
   rollDice() {
