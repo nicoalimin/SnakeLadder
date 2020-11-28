@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Draggable from "react-draggable";
 import { prompts } from "../constants/prompts";
 import { playersActions } from "../reducers/root";
@@ -42,31 +42,28 @@ const initialState = {
   isPopoverOpen: false,
 };
 
-export class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = initialState;
-  }
+export const Board = (props) => {
+  const [state, setState] = useState(initialState);
 
-  componentDidMount() {
+  useEffect(() => {
     document.addEventListener("keyup", (event) => {
       if (event.code === "Space") {
         this.rollDice();
       }
     });
-  }
+  });
 
-  rollDice() {
-    this.setState({ ...this.state, currDiceIndex: null });
+  function rollDice() {
+    this.setState({ ...state, currDiceIndex: null });
     setTimeout(() => {
       this.setState({
-        ...this.state,
+        ...state,
         currDiceIndex: Math.floor(Math.random() * 6),
       });
     }, 1000);
   }
 
-  render() {
+  function render() {
     const totalTiles = DIMENSION_SIZE * DIMENSION_SIZE;
     const boxes = new Array(totalTiles).fill({}).map((_, id) => {
       let count = totalTiles - id;
@@ -96,8 +93,8 @@ export class Board extends React.Component {
     for (let i = 0; i < maxSize; i++) {
       for (let j = 0; j < maxSize; j++) {
         const counter = i * maxSize + j;
-        if (counter >= this.state.players.length) break;
-        const currPlayer = this.state.players[counter];
+        if (counter >= state.players.length) break;
+        const currPlayer = state.players[counter];
         const peon = (
           <Draggable
             defaultPosition={{ x: -(100 * i), y: -80 + 20 * i }}
@@ -126,15 +123,15 @@ export class Board extends React.Component {
       }
     }
 
-    const listItems = this.state.players.map((p, index) => {
+    const listItems = state.players.map((p, index) => {
       return (
         <ListItem className="players">
           <div
             className="delete-button"
             onClick={() => {
               this.setState({
-                ...this.state,
-                players: this.state.players.filter((pl) => pl.name !== p.name),
+                ...state,
+                players: state.players.filter((pl) => pl.name !== p.name),
               });
             }}
           >
@@ -157,18 +154,18 @@ export class Board extends React.Component {
     });
 
     const handleAddPlayer = () => {
-      if (this.state.addPlayerName === "") return;
-      if (!!this.state.players.find((p) => p.name === this.state.addPlayerName))
+      if (state.addPlayerName === "") return;
+      if (!!state.players.find((p) => p.name === state.addPlayerName))
         return;
       const player = {
-        name: this.state.addPlayerName,
-        initials: this.state.addPlayerName.substring(0, 2),
+        name: state.addPlayerName,
+        initials: state.addPlayerName.substring(0, 2),
         color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
         points: 0,
       };
       this.setState({
-        ...this.state,
-        players: [...this.state.players, player].sort(
+        ...state,
+        players: [...state.players, player].sort(
           (a, b) => a.points - b.points
         ),
         addPlayerName: initialState.addPlayerName,
@@ -180,9 +177,9 @@ export class Board extends React.Component {
         <Grid container className="ular-mabok">
           <Popover
             className="ular-mabok-popover"
-            open={this.state.isPopoverOpen}
+            open={state.isPopoverOpen}
             onClose={() =>
-              this.setState({ ...this.state, isPopoverOpen: false })
+              this.setState({ ...state, isPopoverOpen: false })
             }
             anchorOrigin={{
               vertical: "bottom",
@@ -194,10 +191,10 @@ export class Board extends React.Component {
             }}
           >
             <Typography className="number">
-              #{this.state.currPrompt.boxNumber}
+              #{state.currPrompt.boxNumber}
             </Typography>
             <Typography className="text">
-              {this.state.currPrompt.text}
+              {state.currPrompt.text}
             </Typography>
           </Popover>
           <Grid item xs={8}>
@@ -208,7 +205,7 @@ export class Board extends React.Component {
                   className="ular-mabok-input"
                   label="Add player"
                   placeholder="Insert name here..."
-                  value={this.state.addPlayerName}
+                  value={state.addPlayerName}
                   margin="normal"
                   InputLabelProps={{
                     shrink: true,
@@ -216,14 +213,14 @@ export class Board extends React.Component {
                   variant="outlined"
                   onChange={(e) => {
                     this.setState({
-                      ...this.state,
+                      ...state,
                       addPlayerName: e.target.value,
                     });
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       store.dispatch(
-                        playersActions.add({ name: this.state.addPlayerName })
+                        playersActions.add({ name: state.addPlayerName })
                       );
                       handleAddPlayer();
                     }
@@ -237,7 +234,7 @@ export class Board extends React.Component {
                   className="ular-mabok-button"
                   onClick={() => {
                     store.dispatch(
-                      playersActions.add({ name: this.state.addPlayerName })
+                      playersActions.add({ name: state.addPlayerName })
                     );
                     handleAddPlayer();
                   }}
@@ -269,20 +266,20 @@ export class Board extends React.Component {
                 Roll Me!
               </Grid>
               <Grid className="title" xs={12} onClick={() => this.rollDice()}>
-                {this.state.currDiceIndex === null ? (
+                {state.currDiceIndex === null ? (
                   "🤔"
                 ) : (
                   <img
-                    alt={`dice face with ${this.state.currDiceIndex} dots.`}
-                    src={dices[this.state.currDiceIndex]}
+                    alt={`dice face with ${state.currDiceIndex} dots.`}
+                    src={dices[state.currDiceIndex]}
                     className="dices"
                   />
                 )}
               </Grid>
             </Grid>
             <Grid className="prompt">
-              <Box className="number">#{this.state.currPrompt.boxNumber}</Box>
-              <Box className="content">{this.state.currPrompt.text}</Box>
+              <Box className="number">#{state.currPrompt.boxNumber}</Box>
+              <Box className="content">{state.currPrompt.text}</Box>
             </Grid>
             <Grid className="logo">
               <img src={logo} />
@@ -309,4 +306,5 @@ export class Board extends React.Component {
       </>
     );
   }
+  return render();
 }
