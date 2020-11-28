@@ -12,6 +12,7 @@ export const gameActions = {
   start: createAction("game/start"),
   addPlayerToGame: createAction("game/addPlayerToGame"),
   rollDice: createAction("game/rollDice"),
+  setPromptNumber: createAction("game/setPromptNumber"),
   movePlayer: createAction("game/movePlayer"),
   nextTurn: createAction("game/nextTurn"),
 };
@@ -47,6 +48,7 @@ export const gameReducer = createReducer(
     currentTurn: {
       playerId: undefined,
       diceValue: undefined,
+      promptNumber: undefined,
     },
     playersState: {},
   },
@@ -86,7 +88,14 @@ export const gameReducer = createReducer(
           ];
         state.currentTurn.playerId = nextPlayerId;
         state.currentTurn.diceValue = undefined;
+        state.currentTurn.promptNumber = undefined;
       })
+      .addCase(
+        gameActions.setPromptNumber,
+        (state, { payload: { promptNumber } }) => {
+          state.currentTurn.promptNumber = promptNumber;
+        }
+      )
       .addCase(
         gameActions.addPlayerToGame,
         (state, { payload: { playerId } }) => {

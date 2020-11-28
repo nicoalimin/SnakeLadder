@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { gameActions, playersActions } from "../reducers/root";
 import { sleep } from "../utils/sleep";
+const random = require('random') // Need to replace this eventually.
 
 export const asyncThunks = {};
 
@@ -96,25 +97,25 @@ asyncThunks.simulateAGame = createAsyncThunk(
     thunkApi.dispatch(gameActions.start());
     await sleep(SIMULATION_DELAY_TIME);
 
-    await thunkApi.dispatch(asyncThunks.executeATurn());
-    await sleep(SIMULATION_DELAY_TIME);
-    thunkApi.dispatch(gameActions.nextTurn());
+    // await thunkApi.dispatch(asyncThunks.executeATurn());
+    // await sleep(SIMULATION_DELAY_TIME);
+    // thunkApi.dispatch(gameActions.nextTurn());
 
-    await thunkApi.dispatch(asyncThunks.executeATurn());
-    await sleep(SIMULATION_DELAY_TIME);
-    thunkApi.dispatch(gameActions.nextTurn());
+    // await thunkApi.dispatch(asyncThunks.executeATurn());
+    // await sleep(SIMULATION_DELAY_TIME);
+    // thunkApi.dispatch(gameActions.nextTurn());
 
-    await thunkApi.dispatch(asyncThunks.executeATurn());
-    await sleep(SIMULATION_DELAY_TIME);
-    thunkApi.dispatch(gameActions.nextTurn());
+    // await thunkApi.dispatch(asyncThunks.executeATurn());
+    // await sleep(SIMULATION_DELAY_TIME);
+    // thunkApi.dispatch(gameActions.nextTurn());
 
-    await thunkApi.dispatch(asyncThunks.executeATurn());
-    await sleep(SIMULATION_DELAY_TIME);
-    thunkApi.dispatch(gameActions.nextTurn());
+    // await thunkApi.dispatch(asyncThunks.executeATurn());
+    // await sleep(SIMULATION_DELAY_TIME);
+    // thunkApi.dispatch(gameActions.nextTurn());
 
-    await thunkApi.dispatch(asyncThunks.executeATurn());
-    await sleep(SIMULATION_DELAY_TIME);
-    thunkApi.dispatch(gameActions.nextTurn());
+    // await thunkApi.dispatch(asyncThunks.executeATurn());
+    // await sleep(SIMULATION_DELAY_TIME);
+    // thunkApi.dispatch(gameActions.nextTurn());
   }
 );
 
@@ -128,8 +129,17 @@ asyncThunks.executeATurn = createAsyncThunk(
     const { playerId, diceValue } = thunkApi.getState().game.currentTurn;
     const playerPosition = thunkApi.getState().game.playersState[playerId]
       .position;
+
     const to = playerPosition + diceValue;
     thunkApi.dispatch(gameActions.movePlayer({ playerId, to }));
-    return;
+
+    const numTiles = Math.pow(thunkApi.getState().board.dimensionSize, 2);
+
+    let promptNumber;
+    do {
+      promptNumber = to + Math.floor(random.normal(to, numTiles / 2)());
+    } while (promptNumber < 1 || numTiles < promptNumber);
+    
+    thunkApi.dispatch(gameActions.setPromptNumber({ promptNumber }));
   }
 );

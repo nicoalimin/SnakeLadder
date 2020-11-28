@@ -57,6 +57,10 @@ export const Board = (props) => {
   const activePlayer = useSelector(
     (state) => state.players[state.game.currentTurn.playerId]
   );
+  const promptNumber = useSelector(
+    (state) => state.game.currentTurn.promptNumber
+  );
+  const promptMessage = useSelector(state => state.board.prompts[promptNumber]);
 
   // useEffect(() => {
   //   document.addEventListener("keyup", (event) => {
@@ -69,6 +73,12 @@ export const Board = (props) => {
   useEffect(() => {
     dispatch(asyncThunks.simulateAGame());
   }, []);
+
+  useEffect(() => {
+    if (promptNumber) {
+      setIsPopoverOpen(true);
+    }
+  }, [promptNumber]);
 
   function rollDice() {
     setState({ ...state, currDiceIndex: null });
@@ -205,9 +215,19 @@ export const Board = (props) => {
           }}
         >
           <Typography className="number">
-            #{state.currPrompt.boxNumber}
+            #{promptNumber}
           </Typography>
-          <Typography className="text">{state.currPrompt.text}</Typography>
+          <Typography className="text">{promptMessage}</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              dispatch(gameActions.nextTurn());
+              setIsPopoverOpen(false);
+            }}
+          >
+            Ok, Next Turn
+          </Button>
         </Popover>
         <Grid item xs={8}>
           <Grid container item className="top-bar">
@@ -304,6 +324,7 @@ export const Board = (props) => {
               )}
             </Grid>
             <Grid xs={12} container alignItems="center" justify="center">
+              <Typography variant="overline">It's {activePlayer?.name}'s turn.</Typography>
               <Button
                 variant="contained"
                 color="primary"
@@ -314,10 +335,6 @@ export const Board = (props) => {
                 Roll
               </Button>
             </Grid>
-          </Grid>
-          <Grid className="prompt">
-            <Box className="number">#{state.currPrompt.boxNumber}</Box>
-            <Box className="content">{state.currPrompt.text}</Box>
           </Grid>
           <Grid className="logo">
             <img alt="logo" src={logo} />
