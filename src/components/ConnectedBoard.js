@@ -67,13 +67,10 @@ export class Board extends React.Component {
   render() {
     const totalTiles = DIMENSION_SIZE * DIMENSION_SIZE;
     const boxes = new Array(totalTiles).fill({}).map((_, id) => {
-      const count =
-        totalTiles -
-          id + // Reverse the order.
-          (Math.floor((totalTiles - id - 1) / 8) % 2) ===
-        0 // If odd row,
-          ? -DIMENSION_SIZE + (id % DIMENSION_SIZE) * 2 + 1 // subtract the row size and add remainder of id * 2.
-          : 0;
+      let count = totalTiles - id;
+      count += Math.floor((totalTiles - id - 1) / 8) % 2 === 0
+                              ? -DIMENSION_SIZE + (id % DIMENSION_SIZE) * 2 + 1
+                              : 0;
       return (
         <GridListTile
           id={count}
