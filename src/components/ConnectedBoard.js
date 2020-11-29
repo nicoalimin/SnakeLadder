@@ -45,15 +45,15 @@ function mapTileNumberToCoordinates(tileNumber, dimensionSize, gridSize) {
   tileNumber -= 1; // make it zero-based index.
 
   let x = 0; // Start from left.
-  if (tileNumber % (dimensionSize * 2) < dimensionSize) {   // If Odd row,
-    x += tileNumber % dimensionSize;                        // Move from left to right.
+  if (tileNumber % (dimensionSize * 2) < dimensionSize) {
+    // If Odd row,
+    x += tileNumber % dimensionSize; // Move from left to right.
   } else {
-    x += dimensionSize - (tileNumber % dimensionSize);      // Move from right to left.
+    x += dimensionSize - (tileNumber % dimensionSize); // Move from right to left.
   }
 
-
   let y = dimensionSize - 1;
-  y -= Math.floor(tileNumber / dimensionSize);            // Move from bottom to top by "factor" steps.
+  y -= Math.floor(tileNumber / dimensionSize); // Move from bottom to top by "factor" steps.
   return { x: x * gridSize, y: y * gridSize };
 }
 
@@ -94,8 +94,36 @@ export const Board = (props) => {
     return (
       <GridListTile
         id={mapPositionToTileNumber(id, DIMENSION_SIZE)}
-        className="ular-mabok-box"
-      />
+        classes={{
+          root: "ular-mabok-box",
+          tile: "ular-mabox-box-tile",
+        }}
+      >
+        {Object.entries(playersState)
+          .filter(
+            ([_, playerState]) =>
+              playerState.position ===
+              mapPositionToTileNumber(id, DIMENSION_SIZE)
+          )
+          .map(([playerId, _]) => {
+            const player = players.find((p) => p.id === playerId);
+            return (
+              <Draggable grid={[100, 100]}>
+                <Avatar
+                  style={{
+                    backgroundColor: player.color,
+                    height: "30px",
+                    width: "30px",
+                    fontSize: "12px",
+                    margin: "auto",
+                  }}
+                >
+                  {player?.name.substring(0, 2)}
+                </Avatar>
+              </Draggable>
+            );
+          })}
+      </GridListTile>
     );
   });
 
@@ -128,33 +156,34 @@ export const Board = (props) => {
   //   }
   // }
 
-  const peons = Object.entries(playersState).map(
-    ([playerId, playerState], i) => {
-      const player = players.find((player) => player.id === playerId);
-      return (
-        <Draggable
-          position={mapTileNumberToCoordinates(
-            playerState.position,
-            DIMENSION_SIZE,
-            100
-          )}
-          grid={[100, 100]}
-          scale={1}
-        >
-          <Avatar
-            style={{
-              backgroundColor: player.color,
-              height: "20px",
-              width: "20px",
-              fontSize: "12px",
-            }}
-          >
-            {player?.name?.substring(0, 2)}
-          </Avatar>
-        </Draggable>
-      );
-    }
-  );
+  // const peons = Object.entries(playersState).map(
+  //   ([playerId, playerState], i) => {
+  //     const player = players.find((player) => player.id === playerId);
+  //     const coordinates = mapTileNumberToCoordinates(
+  //       playerState.position,
+  //       DIMENSION_SIZE,
+  //       100
+  //     );
+  //     return (
+  //       <Draggable defaultPosition={{
+  //         x: coordinates.x,
+  //         y: coordinates.y,
+  //       }} grid={[100, 100]} scale={1}>
+  //         <div
+  //           style={{
+  //             backgroundColor: player.color,
+  //             height: "20px",
+  //             width: "20px",
+  //             fontSize: "12px",
+  //             textAlign: "center",
+  //           }}
+  //         >
+  //           {player?.name?.substring(0, 2)}
+  //         </div>
+  //       </Draggable>
+  //     );
+  //   }
+  // );
 
   const listItems = players.map((p, index) => {
     return (
@@ -257,11 +286,6 @@ export const Board = (props) => {
             </Grid>
           </Grid>
           <Grid item>
-            <div style={{ zIndex: 2, margin: "0 40px", height: 0 }}>
-              <div style={{ height: 100, width: 100, }}>
-                {peons}
-              </div>
-            </div>
             <GridList
               cols={8}
               className="ular-mabok-board"

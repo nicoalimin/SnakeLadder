@@ -64,29 +64,29 @@ asyncThunks.simulateAGame = createAsyncThunk(
     );
     await sleep(SIMULATION_DELAY_TIME);
 
-    // thunkApi.dispatch(
-    //   playersActions.add({
-    //     name: "Winny",
-    //     color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-    //   })
-    // );
-    // await sleep(SIMULATION_DELAY_TIME);
+    thunkApi.dispatch(
+      playersActions.add({
+        name: "Winny",
+        color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+      })
+    );
+    await sleep(SIMULATION_DELAY_TIME);
 
-    // thunkApi.dispatch(
-    //   playersActions.add({
-    //     name: "Jennifer",
-    //     color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-    //   })
-    // );
-    // await sleep(SIMULATION_DELAY_TIME);
+    thunkApi.dispatch(
+      playersActions.add({
+        name: "Jennifer",
+        color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+      })
+    );
+    await sleep(SIMULATION_DELAY_TIME);
 
-    // thunkApi.dispatch(
-    //   playersActions.add({
-    //     name: "Kynan",
-    //     color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-    //   })
-    // );
-    // await sleep(SIMULATION_DELAY_TIME);
+    thunkApi.dispatch(
+      playersActions.add({
+        name: "Kynan",
+        color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+      })
+    );
+    await sleep(SIMULATION_DELAY_TIME);
 
     // Load the players and initialize the game.
     const playerIds = Object.keys(thunkApi.getState().players);
