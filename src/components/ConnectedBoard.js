@@ -15,7 +15,7 @@ import {
 import React, { useEffect, useState } from "react";
 import Draggable from "react-draggable";
 import { useDispatch, useSelector } from "react-redux";
-import { macroACtions } from "../actionCreators/actionCreators";
+import { macroActions } from "../actionCreators/actionCreators";
 import { prompts } from "../constants/prompts";
 import { gameActions, playersActions, GAME_STATE } from "../reducers/root";
 import diceFive from "../static/dice_five.svg";
@@ -81,7 +81,7 @@ export const Board = (props) => {
   const gameState = useSelector((state) => state.game.state);
 
   // useEffect(() => {
-  //   dispatch(macroACtions.simulateAGame());
+  //   dispatch(macroActions.simulateAGame());
   // }, []);
 
   useEffect(() => {
@@ -255,7 +255,7 @@ export const Board = (props) => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     store.dispatch(
-                      macroACtions.addAndRegisterPlayer({
+                      macroActions.addAndRegisterPlayer({
                         name: addPlayerNameInputValue,
                         color: `#${Math.floor(
                           Math.random() * 16777215
@@ -275,7 +275,7 @@ export const Board = (props) => {
                 disabled={addPlayerNameInputValue === ""}
                 onClick={() => {
                   store.dispatch(
-                    macroACtions.addAndRegisterPlayer({
+                    macroActions.addAndRegisterPlayer({
                       name: addPlayerNameInputValue,
                       color: `#${Math.floor(Math.random() * 16777215).toString(
                         16
@@ -331,7 +331,7 @@ export const Board = (props) => {
                   variant="contained"
                   color="primary"
                   onClick={() => {
-                    store.dispatch(macroACtions.startNewGame());
+                    store.dispatch(macroActions.startNewGame());
                   }}
                 >
                   Start the game
@@ -346,7 +346,7 @@ export const Board = (props) => {
                     color="primary"
                     margin="auto"
                     style={{ visibility: !diceValue ? "visible" : "hidden" }}
-                    onClick={() => dispatch(macroACtions.executeATurn())}
+                    onClick={() => dispatch(macroActions.executeATurn())}
                   >
                     Roll
                   </Button>

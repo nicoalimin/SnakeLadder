@@ -3,12 +3,12 @@ import { gameActions, playersActions } from "../reducers/root";
 import { sleep } from "../utils/sleep";
 const random = require("random"); // Need to replace this eventually.
 
-export const macroACtions = {};
+export const macroActions = {};
 
 const SIMULATION_DELAY_TIME = 1000;
 
 /** For testing and demo purpose. To Be Deleted. */
-macroACtions.simulateAGame = createAsyncThunk(
+macroActions.simulateAGame = createAsyncThunk(
   "simulateAGame",
   async (_, thunkApi) => {
     thunkApi.dispatch(
@@ -97,30 +97,30 @@ macroACtions.simulateAGame = createAsyncThunk(
     thunkApi.dispatch(gameActions.start());
     await sleep(SIMULATION_DELAY_TIME);
 
-    // await thunkApi.dispatch(macroACtions.executeATurn());
+    // await thunkApi.dispatch(macroActions.executeATurn());
     // await sleep(SIMULATION_DELAY_TIME);
     // thunkApi.dispatch(gameActions.nextTurn());
 
-    // await thunkApi.dispatch(macroACtions.executeATurn());
+    // await thunkApi.dispatch(macroActions.executeATurn());
     // await sleep(SIMULATION_DELAY_TIME);
     // thunkApi.dispatch(gameActions.nextTurn());
 
-    // await thunkApi.dispatch(macroACtions.executeATurn());
+    // await thunkApi.dispatch(macroActions.executeATurn());
     // await sleep(SIMULATION_DELAY_TIME);
     // thunkApi.dispatch(gameActions.nextTurn());
 
-    // await thunkApi.dispatch(macroACtions.executeATurn());
+    // await thunkApi.dispatch(macroActions.executeATurn());
     // await sleep(SIMULATION_DELAY_TIME);
     // thunkApi.dispatch(gameActions.nextTurn());
 
-    // await thunkApi.dispatch(macroACtions.executeATurn());
+    // await thunkApi.dispatch(macroActions.executeATurn());
     // await sleep(SIMULATION_DELAY_TIME);
     // thunkApi.dispatch(gameActions.nextTurn());
   }
 );
 
 /** A thunk that automatically executes a turn. */
-macroACtions.executeATurn = createAsyncThunk(
+macroActions.executeATurn = createAsyncThunk(
   "executeATurn",
   async (_, thunkApi) => {
     thunkApi.dispatch(gameActions.rollDice());
@@ -144,7 +144,7 @@ macroACtions.executeATurn = createAsyncThunk(
   }
 );
 
-macroACtions.addAndRegisterPlayer = (player) => (dispatch, getState) => {
+macroActions.addAndRegisterPlayer = (player) => (dispatch, getState) => {
   dispatch(playersActions.add(player));
   dispatch(
     gameActions.addPlayerToGame({
@@ -156,7 +156,7 @@ macroACtions.addAndRegisterPlayer = (player) => (dispatch, getState) => {
 };
 
 
-macroACtions.startNewGame = () => (dispatch, getState) => {
+macroActions.startNewGame = () => (dispatch, getState) => {
   const playerIds = Object.keys(getState().players);
   dispatch(gameActions.init({ playerIds }));
   dispatch(gameActions.start());
