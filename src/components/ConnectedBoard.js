@@ -15,9 +15,9 @@ import {
 import React, { useEffect, useState } from "react";
 import Draggable from "react-draggable";
 import { useDispatch, useSelector } from "react-redux";
-import { asyncThunks } from "../actionCreators/actionCreators";
+import { macroACtions } from "../actionCreators/actionCreators";
 import { prompts } from "../constants/prompts";
-import { gameActions, playersActions } from "../reducers/root";
+import { gameActions, playersActions, GAME_STATE } from "../reducers/root";
 import diceFive from "../static/dice_five.svg";
 import diceFour from "../static/dice_four.svg";
 import diceOne from "../static/dice_one.svg";
@@ -78,10 +78,11 @@ export const Board = (props) => {
     (state) => state.board.prompts[promptNumber]
   );
   const playersState = useSelector((state) => state.game.playersState);
+  const gameState = useSelector((state) => state.game.state);
 
-  useEffect(() => {
-    dispatch(asyncThunks.simulateAGame());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(macroACtions.simulateAGame());
+  // }, []);
 
   useEffect(() => {
     if (promptNumber) {
@@ -254,13 +255,14 @@ export const Board = (props) => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     store.dispatch(
-                      playersActions.add({
+                      macroACtions.addAndRegisterPlayer({
                         name: addPlayerNameInputValue,
                         color: `#${Math.floor(
                           Math.random() * 16777215
                         ).toString(16)}`,
                       })
                     );
+                    setAddPlayerNameInputValue("");
                   }
                 }}
               />
@@ -270,15 +272,17 @@ export const Board = (props) => {
                 variant="contained"
                 color="primary"
                 className="ular-mabok-button"
+                disabled={addPlayerNameInputValue === ""}
                 onClick={() => {
                   store.dispatch(
-                    playersActions.add({
+                    macroACtions.addAndRegisterPlayer({
                       name: addPlayerNameInputValue,
                       color: `#${Math.floor(Math.random() * 16777215).toString(
                         16
                       )}`,
                     })
                   );
+                  setAddPlayerNameInputValue("");
                 }}
               >
                 Add Player
@@ -308,7 +312,11 @@ export const Board = (props) => {
             </Grid>
             <Grid className="title" xs={12} minHeight="50px">
               {!diceValue ? (
-                "🤔"
+                gameState === GAME_STATE.NOT_STARTED ? (
+                  "🎉"
+                ) : (
+                  "🤔"
+                )
               ) : (
                 <img
                   alt={`dice face with ${diceValue} dots.`}
@@ -318,18 +326,32 @@ export const Board = (props) => {
               )}
             </Grid>
             <Grid xs={12} container alignItems="center" justify="center">
-              <Typography variant="overline">
-                It's {activePlayer?.name}'s turn.
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                margin="auto"
-                style={{ visibility: !diceValue ? "visible" : "hidden" }}
-                onClick={() => dispatch(asyncThunks.executeATurn())}
-              >
-                Roll
-              </Button>
+              {gameState === GAME_STATE.NOT_STARTED ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    store.dispatch(macroACtions.startNewGame());
+                  }}
+                >
+                  Start the game
+                </Button>
+              ) : (
+                <>
+                  <Typography variant="overline">
+                    It's {activePlayer?.name}'s turn.
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    margin="auto"
+                    style={{ visibility: !diceValue ? "visible" : "hidden" }}
+                    onClick={() => dispatch(macroACtions.executeATurn())}
+                  >
+                    Roll
+                  </Button>
+                </>
+              )}
             </Grid>
           </Grid>
           <Grid className="logo">

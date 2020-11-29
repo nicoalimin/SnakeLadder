@@ -10,7 +10,7 @@ import { store } from "./store/store";
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Board className="ular-mabok" />
+      {/* <Board className="ular-mabok" /> */}
       <ReduxConnectedBoard className="ular-mabok" />
     </Provider>
   </React.StrictMode>,
