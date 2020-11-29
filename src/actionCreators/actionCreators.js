@@ -123,6 +123,7 @@ macroActions.simulateAGame = createAsyncThunk(
 macroActions.executeATurn = createAsyncThunk(
   "executeATurn",
   async (_, thunkApi) => {
+    // Roll Dice
     thunkApi.dispatch(gameActions.rollDice());
     await sleep(2000);
 
@@ -130,11 +131,26 @@ macroActions.executeATurn = createAsyncThunk(
     const playerPosition = thunkApi.getState().game.playersState[playerId]
       .position;
 
+    // Move to target one step at a time.
     const to = playerPosition + diceValue;
-    thunkApi.dispatch(gameActions.movePlayer({ playerId, to }));
+    for (let i = playerPosition + 1; i <= to; i++) {
+      thunkApi.dispatch(gameActions.movePlayer({ playerId, to: i }));
+      await sleep(500);
+    }
 
+    const portals = [
+      ...thunkApi.getState().board.ladders,
+      ...thunkApi.getState().board.snakes,
+    ];
+
+    const portal =portals.find((portal) => portal.from === to);
+
+    if (portal) {
+      thunkApi.dispatch(gameActions.movePlayer({ playerId, to: portal.to }));
+    }
+
+    // Get prompt card.
     const numTiles = Math.pow(thunkApi.getState().board.dimensionSize, 2);
-
     let promptNumber;
     do {
       promptNumber = to + Math.floor(random.normal(to, numTiles / 2)());
@@ -155,9 +171,8 @@ macroActions.addAndRegisterPlayer = (player) => (dispatch, getState) => {
   );
 };
 
-
 macroActions.startNewGame = () => (dispatch, getState) => {
   const playerIds = Object.keys(getState().players);
   dispatch(gameActions.init({ playerIds }));
   dispatch(gameActions.start());
-}
+};
