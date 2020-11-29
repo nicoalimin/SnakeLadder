@@ -3,13 +3,15 @@ import ReactDOM from "react-dom";
 import "./index.scss";
 import reportWebVitals from "./reportWebVitals";
 import Board from "./components/board";
-import { Provider } from 'react-redux';
+import { Board as ReduxConnectedBoard } from "./components/ConnectedBoard";
+import { Provider } from "react-redux";
 import { store } from "./store/store";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Board className="ular-mabok" />
+      {/* <Board className="ular-mabok" /> */}
+      <ReduxConnectedBoard className="ular-mabok" />
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

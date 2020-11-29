@@ -10,7 +10,9 @@ export const playersActions = {
 export const gameActions = {
   init: createAction("game/init"),
   start: createAction("game/start"),
+  addPlayerToGame: createAction("game/addPlayerToGame"),
   rollDice: createAction("game/rollDice"),
+  setPromptNumber: createAction("game/setPromptNumber"),
   movePlayer: createAction("game/movePlayer"),
   nextTurn: createAction("game/nextTurn"),
 };
@@ -30,11 +32,15 @@ export const playersReducer = createReducer({}, (builder) => {
 });
 
 // -------- Games ----
-const GAME_STATE = {
+export const GAME_STATE = {
   NOT_STARTED: "NOT_STARTED",
   IN_PROGRESS: "IN_PROGRESS",
   DONE: "DONE",
 };
+
+const initializePlayerState = () => ({
+  position: 1,
+});
 
 export const gameReducer = createReducer(
   {
@@ -42,6 +48,7 @@ export const gameReducer = createReducer(
     currentTurn: {
       playerId: undefined,
       diceValue: undefined,
+      promptNumber: undefined,
     },
     playersState: {},
   },
@@ -55,7 +62,7 @@ export const gameReducer = createReducer(
 
         // Resets All players to tile 1.
         state.playersState = playerIds.reduce((acc, id) => {
-          acc[id] = { position: 1 };
+          acc[id] = initializePlayerState();
           return acc;
         }, {});
       })
@@ -76,10 +83,25 @@ export const gameReducer = createReducer(
         const currentPlayerId = state.currentTurn.playerId;
 
         const nextPlayerId =
-        playerIds[(playerIds.indexOf(currentPlayerId) + 1) % playerIds.length];
+          playerIds[
+            (playerIds.indexOf(currentPlayerId) + 1) % playerIds.length
+          ];
         state.currentTurn.playerId = nextPlayerId;
         state.currentTurn.diceValue = undefined;
-      });
+        state.currentTurn.promptNumber = undefined;
+      })
+      .addCase(
+        gameActions.setPromptNumber,
+        (state, { payload: { promptNumber } }) => {
+          state.currentTurn.promptNumber = promptNumber;
+        }
+      )
+      .addCase(
+        gameActions.addPlayerToGame,
+        (state, { payload: { playerId } }) => {
+          state.playersState[playerId] = initializePlayerState();
+        }
+      );
   }
 );
 

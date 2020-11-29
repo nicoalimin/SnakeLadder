@@ -54,4 +54,5 @@ export const BOARD_MAP_1 = {
         },
     ],
     prompts,
+    dimensionSize: 8,
 };

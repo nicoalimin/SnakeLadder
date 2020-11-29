@@ -23,26 +23,6 @@ import diceThree from "../static/dice_three.svg";
 import diceTwo from "../static/dice_two.svg";
 import logo from "../static/logo.jpeg";
 
-const playerGen = (name) => {
-  return {
-    name: name,
-    initials: name,
-    color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-    points: 0,
-  };
-};
-const players = [
-  playerGen("p1"),
-  playerGen("p2"),
-  playerGen("p3"),
-  playerGen("p4"),
-  playerGen("p5"),
-  playerGen("p6"),
-  playerGen("p7"),
-  playerGen("p8"),
-  playerGen("p9"),
-  playerGen("p10"),
-];
 const dices = [diceOne, diceTwo, diceThree, diceFour, diceFive, diceSix];
 
 const initialState = {
