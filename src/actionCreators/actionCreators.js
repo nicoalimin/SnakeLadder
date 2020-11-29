@@ -123,6 +123,8 @@ macroActions.simulateAGame = createAsyncThunk(
 macroActions.executeATurn = createAsyncThunk(
   "executeATurn",
   async (_, thunkApi) => {
+    const numTiles = Math.pow(thunkApi.getState().board.dimensionSize, 2);
+
     // Roll Dice
     thunkApi.dispatch(gameActions.rollDice());
     await sleep(2000);
@@ -150,10 +152,9 @@ macroActions.executeATurn = createAsyncThunk(
     }
 
     // Get prompt card.
-    const numTiles = Math.pow(thunkApi.getState().board.dimensionSize, 2);
     let promptNumber;
     do {
-      promptNumber = to + Math.floor(random.normal(to, numTiles / 2)());
+      promptNumber = to + Math.floor(random.normal(to, numTiles)());
     } while (promptNumber < 1 || numTiles < promptNumber);
 
     thunkApi.dispatch(gameActions.setPromptNumber({ promptNumber }));

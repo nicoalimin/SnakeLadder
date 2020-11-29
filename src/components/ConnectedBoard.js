@@ -229,6 +229,7 @@ export const Board = (props) => {
           <Button
             variant="contained"
             color="primary"
+            focus
             onClick={() => {
               dispatch(gameActions.nextTurn());
               setIsPopoverOpen(false);
@@ -345,7 +346,7 @@ export const Board = (props) => {
                     variant="contained"
                     color="primary"
                     margin="auto"
-                    style={{ visibility: !diceValue ? "visible" : "hidden" }}
+                    // style={{ visibility: !diceValue ? "visible" : "hidden" }}
                     onClick={() => dispatch(macroActions.executeATurn())}
                   >
                     Roll
