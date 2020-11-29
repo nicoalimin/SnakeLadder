@@ -56,13 +56,13 @@ asyncThunks.simulateAGame = createAsyncThunk(
     );
     await sleep(SIMULATION_DELAY_TIME);
 
-    // thunkApi.dispatch(
-    //   playersActions.add({
-    //     name: "Jessica",
-    //     color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-    //   })
-    // );
-    // await sleep(SIMULATION_DELAY_TIME);
+    thunkApi.dispatch(
+      playersActions.add({
+        name: "Jessica",
+        color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+      })
+    );
+    await sleep(SIMULATION_DELAY_TIME);
 
     // thunkApi.dispatch(
     //   playersActions.add({
@@ -124,7 +124,7 @@ asyncThunks.executeATurn = createAsyncThunk(
   "executeATurn",
   async (_, thunkApi) => {
     thunkApi.dispatch(gameActions.rollDice());
-    await sleep(SIMULATION_DELAY_TIME);
+    await sleep(2000);
 
     const { playerId, diceValue } = thunkApi.getState().game.currentTurn;
     const playerPosition = thunkApi.getState().game.playersState[playerId]

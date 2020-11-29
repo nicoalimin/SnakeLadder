@@ -31,6 +31,32 @@ const dices = [diceOne, diceTwo, diceThree, diceFour, diceFive, diceSix];
 
 const DIMENSION_SIZE = 8;
 
+function mapPositionToTileNumber(id, dimensionSize) {
+  const totalTiles = dimensionSize * dimensionSize;
+  let count = totalTiles - id;
+  count +=
+    Math.floor((totalTiles - id - 1) / 8) % 2 === 0
+      ? -dimensionSize + (id % dimensionSize) * 2 + 1
+      : 0;
+  return count;
+}
+
+function mapTileNumberToCoordinates(tileNumber, dimensionSize, gridSize) {
+  tileNumber -= 1; // make it zero-based index.
+
+  let x = 0; // Start from left.
+  if (tileNumber % (dimensionSize * 2) < dimensionSize) {   // If Odd row,
+    x += tileNumber % dimensionSize;                        // Move from left to right.
+  } else {
+    x += dimensionSize - (tileNumber % dimensionSize);      // Move from right to left.
+  }
+
+
+  let y = dimensionSize - 1;
+  y -= Math.floor(tileNumber / dimensionSize);            // Move from bottom to top by "factor" steps.
+  return { x: x * gridSize, y: y * gridSize };
+}
+
 export const Board = (props) => {
   const [addPlayerNameInputValue, setAddPlayerNameInputValue] = useState("");
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -51,6 +77,7 @@ export const Board = (props) => {
   const promptMessage = useSelector(
     (state) => state.board.prompts[promptNumber]
   );
+  const playersState = useSelector((state) => state.game.playersState);
 
   useEffect(() => {
     dispatch(asyncThunks.simulateAGame());
@@ -64,53 +91,70 @@ export const Board = (props) => {
 
   const totalTiles = DIMENSION_SIZE * DIMENSION_SIZE;
   const boxes = new Array(totalTiles).fill({}).map((_, id) => {
-    let count = totalTiles - id;
-    count +=
-      Math.floor((totalTiles - id - 1) / 8) % 2 === 0
-        ? -DIMENSION_SIZE + (id % DIMENSION_SIZE) * 2 + 1
-        : 0;
     return (
       <GridListTile
-        id={count}
+        id={mapPositionToTileNumber(id, DIMENSION_SIZE)}
         className="ular-mabok-box"
       />
     );
   });
 
-  const peons = [];
-  const maxSize = 5;
-  for (let i = 0; i < maxSize; i++) {
-    for (let j = 0; j < maxSize; j++) {
-      const counter = i * maxSize + j;
-      if (counter >= players.length) break;
-      const currPlayer = players[counter];
-      const peon = (
+  // const peons = [];
+  // const maxSize = 5;
+  // for (let i = 0; i < maxSize; i++) {
+  //   for (let j = 0; j < maxSize; j++) {
+  //     const counter = i * maxSize + j;
+  //     if (counter >= players.length) break;
+  //     const currPlayer = players[counter];
+  //     const peon = (
+  //       <Draggable
+  //         defaultPosition={{ x: -(100 * i), y: -80 + 20 * i }}
+  //         grid={[100, 100]}
+  //         scale={1}
+  //       >
+  //         <Avatar
+  //           style={{
+  //             backgroundColor: currPlayer.color,
+  //             height: "20px",
+  //             width: "20px",
+  //             fontSize: "12px",
+  //           }}
+  //         >
+  //           {currPlayer?.name?.substring(0, 2)}
+  //         </Avatar>
+  //       </Draggable>
+  //     );
+  //     peons.push(peon);
+  //   }
+  // }
+
+  const peons = Object.entries(playersState).map(
+    ([playerId, playerState], i) => {
+      const player = players.find((player) => player.id === playerId);
+      return (
         <Draggable
-          defaultPosition={{ x: -(100 * i), y: -80 + 20 * i }}
+          position={mapTileNumberToCoordinates(
+            playerState.position,
+            DIMENSION_SIZE,
+            100
+          )}
           grid={[100, 100]}
           scale={1}
-          // onDragEnd={(elem, x, y, e) => {
-          //   console.log(elem)
-          //   console.log(x)
-          //   console.log(y)
-          //   console.log(e)
-          // }}
         >
           <Avatar
             style={{
-              backgroundColor: currPlayer.color,
+              backgroundColor: player.color,
               height: "20px",
               width: "20px",
               fontSize: "12px",
             }}
           >
-            {currPlayer?.name?.substring(0, 2)}
+            {player?.name?.substring(0, 2)}
           </Avatar>
         </Draggable>
       );
-      peons.push(peon);
     }
-  }
+  );
 
   const listItems = players.map((p, index) => {
     return (
@@ -213,6 +257,11 @@ export const Board = (props) => {
             </Grid>
           </Grid>
           <Grid item>
+            <div style={{ zIndex: 2, margin: "0 40px", height: 0 }}>
+              <div style={{ height: 100, width: 100, }}>
+                {peons}
+              </div>
+            </div>
             <GridList
               cols={8}
               className="ular-mabok-board"
@@ -220,7 +269,6 @@ export const Board = (props) => {
             >
               {boxes}
             </GridList>
-            <ul style={{ zIndex: 2, margin: "auto" }}>{peons}</ul>
           </Grid>
         </Grid>
         <Grid
@@ -234,11 +282,7 @@ export const Board = (props) => {
             <Grid className="title" xs={12}>
               Roll Me!
             </Grid>
-            <Grid
-              className="title"
-              xs={12}
-              minHeight="50px"
-            >
+            <Grid className="title" xs={12} minHeight="50px">
               {!diceValue ? (
                 "🤔"
               ) : (
