@@ -214,7 +214,7 @@ export const Board = (props) => {
         <Popover
           className="ular-mabok-popover"
           open={isPopoverOpen}
-          onClose={() => setIsPopoverOpen(false)}
+          // onClose={() => setIsPopoverOpen(false)}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "center",
